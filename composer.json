@@ -1,0 +1,33 @@
+{
+    "name": "phower/image",
+    "description": "PHP library for image manipulation with built in support for GD, Imagick and Gmagick.",
+    "homepage": "https://github.com/phower/image",
+    "type": "library",
+    "require": {
+        "php": "^5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.7"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    },
+    "autoload-dev": {
+        "classmap-dev": [
+            "test/"
+        ]
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pedro Brazao Ferreira",
+            "email": "pedro@phower.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/phower/image/issues"
+    },
+    "minimum-stability": "stable"
+}
