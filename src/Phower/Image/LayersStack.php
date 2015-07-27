@@ -149,7 +149,8 @@ class LayersStack implements Countable, ArrayAccess, Iterator
     }
 
     /**
-     * Append a new layer to the layers stack
+     * Append a new layer to the layers stack the change
+     * position to the new layer
      * 
      * @param \Phower\Image\LayerInterface $layer
      * @param int $mode

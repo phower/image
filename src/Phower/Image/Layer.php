@@ -2,16 +2,16 @@
 
 namespace Phower\Image;
 
-use Imagick;
 use Phower\Image\Exception\InvalidArgumentException;
+use Phower\Image\Adapter\AdapterInterface;
 
 class Layer implements LayerInterface
 {
 
     /**
-     * @var resource
+     * @var \Phower\Image\Adapter\AdapterInterface
      */
-    protected $resource;
+    protected $adapter;
 
     /**
      * @var string
@@ -28,15 +28,9 @@ class Layer implements LayerInterface
      */
     protected $posY;
 
-    public function __construct($resource, $posX = 0, $posY = 0, $name = null)
+    public function __construct(AdapterInterface $adapter, $posX = 0, $posY = 0, $name = null)
     {
-        if (!(is_resource($resource) && get_resource_type($resource) === 'gd' ||
-                $resource instanceof Imagick)) {
-            throw new InvalidArgumentException('Resource must be a GD resource or'
-            . ' an instance of Imagick or Gmagick.');
-        }
-
-        $this->resource = $resource;
+        $this->adapter = $adapter;
         $this->posX = (int) $posX;
         $this->posY = (int) $posY;
 
@@ -46,13 +40,13 @@ class Layer implements LayerInterface
     }
 
     /**
-     * Get resource
+     * Get adapter
      * 
-     * @return resource
+     * @return \Phower\Image\Adapter\AdapterInterface
      */
-    public function getResource()
+    public function getAdapter()
     {
-        return $this->resource;
+        return $this->adapter;
     }
 
     /**
