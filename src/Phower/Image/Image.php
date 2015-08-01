@@ -6,12 +6,8 @@ use Phower\Image\Adapter\AdapterInterface;
 use Phower\Image\Exception\InvalidArgumentException;
 use Phower\Image\Exception\RuntimeException;
 
-class Image
+class Image implements ImageInterface
 {
-
-    const ADAPTER_GD = 'gd';
-    const ADAPTER_GMAGICK = 'gmagick';
-    const ADAPTER_IMAGICK = 'imagick';
 
     /**
      * @var array
@@ -42,6 +38,14 @@ class Image
      */
     protected $layers;
 
+    /**
+     * Construct new image
+     * 
+     * @param \Phower\Image\Adapter\AdapterInterface|strin|null $defaultAdapter
+     * @param int|null $width
+     * @param int|null $height
+     * @param \Phower\Image\ColorInterface|null $backgroundColor
+     */
     public function __construct($defaultAdapter = null, $width = null, $height = null)
     {
         if ($defaultAdapter !== null) {
@@ -98,9 +102,10 @@ class Image
                 $this->defaultAdapter = $this->adapterAlias[self::ADAPTER_GD];
             } elseif (class_exists('Gmagick')) {
                 $this->defaultAdapter = $this->adapterAlias[self::ADAPTER_GMAGICK];
+            } else {
+                throw new RuntimeException('At least one of Imagick, Gmagick or GD must be installed. '
+                . 'None of them was found.');
             }
-            throw new RuntimeException('At least one of Imagick, Gmagick or GD must be installed. '
-            . 'None of them was found.');
         }
         return $this->defaultAdapter;
     }
@@ -165,6 +170,35 @@ class Image
     public function getLayers()
     {
         return $this->layers;
+    }
+
+    /**
+     * Import file into a new layer
+     * 
+     * @param string $file
+     * @param int $mode
+     * @return \Phower\Image\Image
+     * @throws InvalidArgumentException
+     */
+    public function import($file, $mode = LayersStack::APPEND_TOP)
+    {
+        if (!is_readable($file)) {
+            throw new InvalidArgumentException('Unable to import source: ' . $file);
+        }
+
+        /* @var $adapter \Phower\Image\Adapter\AdapterInterface */
+        $callback = $this->getDefaultAdapter() . '::fromFile';
+        $adapter = call_user_func_array($callback, [$file]);
+        $layer = new Layer($adapter);
+
+        if ($this->width === null && $this->height === null && $this->layers->count() === 0) {
+            $this->width = $layer->getWidth();
+            $this->height = $layer->getHeight();
+        }
+
+        $this->layers->append($layer, $mode);
+
+        return $this;
     }
 
 }

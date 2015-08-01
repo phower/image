@@ -4,6 +4,8 @@ namespace Phower\Image\Adapter;
 
 use Phower\Image\Image;
 use Phower\Image\Layer;
+use Phower\Image\Color;
+use Phower\Image\ColorInterface;
 use Phower\Image\Exception\InvalidArgumentException;
 use Phower\Image\Exception\RuntimeException;
 
@@ -25,11 +27,11 @@ class GdAdapter implements AdapterInterface
      */
     public function __construct($resource)
     {
-        if (!self::isInstalled()) {
+        if (!$this->isInstalled()) {
             throw new RuntimeException('GD library not installed.');
         }
 
-        if (!version_compare(self::getVersion(), self::VERSION_REQUIRED, '>=')) {
+        if (!version_compare($this->getVersion(), self::VERSION_REQUIRED, '>=')) {
             throw new RuntimeException(sprintf('GD library is installed but version is lower than required (>= %s).', self::VERSION_REQUIRED));
         }
 
@@ -45,7 +47,7 @@ class GdAdapter implements AdapterInterface
      * 
      * @return boolean
      */
-    public static function isInstalled()
+    public function isInstalled()
     {
         return function_exists('gd_info');
     }
@@ -55,7 +57,7 @@ class GdAdapter implements AdapterInterface
      * 
      * @return string|null
      */
-    public static function getVersion()
+    public function getVersion()
     {
         $info = gd_info();
         $version = isset($info['GD Version']) ? $info['GD Version'] : null;
@@ -71,7 +73,8 @@ class GdAdapter implements AdapterInterface
      */
     public static function fromFile($file)
     {
-        if (!$string = @file_get_contents($file)) {
+        if (false ===
+                $string = file_get_contents($file)) {
             throw new InvalidArgumentException('Unable to read file: ' . $file);
         }
 
@@ -87,7 +90,7 @@ class GdAdapter implements AdapterInterface
      */
     public static function fromString($string)
     {
-        if (!$resource = imagecreatefromstring($string)) {
+        if (false === $resource = imagecreatefromstring($string)) {
             throw new InvalidArgumentException('Unable to create an image from string, using GD.');
         }
 
@@ -99,10 +102,11 @@ class GdAdapter implements AdapterInterface
      * 
      * @param int $width
      * @param int $height
+     * @param \Phower\Image\ColorInterface $background
      * @return \Phower\Image\Adapter\GdAdapter
      * @throws InvalidArgumentException
      */
-    public static function create($width, $height)
+    public static function create($width, $height, ColorInterface $background = null)
     {
         if ((int) $width < 1) {
             throw new InvalidArgumentException('Width must be greater than 0.');
@@ -112,7 +116,13 @@ class GdAdapter implements AdapterInterface
             throw new InvalidArgumentException('Height must be greater than 0.');
         }
 
+        if ($background === null) {
+            $background = new Color();
+        }
+
         $resource = imagecreatetruecolor($width, $height);
+        imagealphablending($resource, true);
+        imagefill($resource, 0, 0, $background->toInt());
 
         return new static($resource);
     }

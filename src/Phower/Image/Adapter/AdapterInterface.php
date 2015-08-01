@@ -2,6 +2,8 @@
 
 namespace Phower\Image\Adapter;
 
+use Phower\Image\ColorInterface;
+
 interface AdapterInterface
 {
 
@@ -18,14 +20,14 @@ interface AdapterInterface
      * 
      * @return boolean
      */
-    public static function isInstalled();
+    public function isInstalled();
 
     /**
      * Get installed library version
      * 
      * @return string|null
      */
-    public static function getVersion();
+    public function getVersion();
 
     /**
      * Create new adapter instance from file
@@ -50,10 +52,11 @@ interface AdapterInterface
      * 
      * @param int $width
      * @param int $height
+     * @param \Phower\Image\ColorInterface $background
      * @return \Phower\Image\Adapter\AdapterInterface
      * @throws InvalidArgumentException
      */
-    public static function create($width, $height);
+    public static function create($width, $height, ColorInterface $background = null);
 
     /**
      * Get resource

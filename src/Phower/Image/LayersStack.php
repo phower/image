@@ -66,8 +66,14 @@ class LayersStack implements Countable, ArrayAccess, Iterator
      */
     public function offsetSet($offset, $value)
     {
-        if ((int) $offset < 0) {
+        $offset = intval($offset);
+
+        if ($offset < 0) {
             throw new InvalidArgumentException('Offset must be an integer greater or equal 0.');
+        }
+
+        if (!isset($this->layers[$offset])) {
+            throw new InvalidArgumentException('Inexistent offset number: ' . $offset);
         }
 
         if (!$value instanceof LayerInterface) {
@@ -110,11 +116,12 @@ class LayersStack implements Countable, ArrayAccess, Iterator
     /**
      * Get current layer
      * 
-     * @return LayerInterface
+     * @return LayerInterface|null
      */
     public function current()
     {
-        return $this->layers[$this->position];
+        return isset($this->layers[$this->position]) ?
+                $this->layers[$this->position] : null;
     }
 
     /**
@@ -179,7 +186,7 @@ class LayersStack implements Countable, ArrayAccess, Iterator
         if ($this->valid() && $this->key() > 0) {
             $layer = $this->current();
             $this->offsetUnset($this->key());
-            $this->add($layer);
+            $this->append($layer, self::APPEND_TOP);
         }
 
         return $this;
@@ -195,7 +202,7 @@ class LayersStack implements Countable, ArrayAccess, Iterator
         if ($this->valid() && $this->key() < $this->count() - 1) {
             $layer = $this->current();
             $this->offsetUnset($this->key());
-            array_push($this->layers, $layer);
+            $this->append($layer, self::APPEND_BOTTOM);
         }
 
         return $this;
@@ -213,6 +220,7 @@ class LayersStack implements Countable, ArrayAccess, Iterator
             $layer = $this->current();
             $this->offsetSet($key, $this->offsetGet($key - 1));
             $this->offsetSet($key - 1, $layer);
+            $this->position = $key - 1;
         }
 
         return $this;
@@ -230,6 +238,7 @@ class LayersStack implements Countable, ArrayAccess, Iterator
             $layer = $this->current();
             $this->offsetSet($key, $this->offsetGet($key + 1));
             $this->offsetSet($key + 1, $layer);
+            $this->position = $key + 1;
         }
 
         return $this;

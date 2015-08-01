@@ -8,79 +8,80 @@ use Phower\Image\Layer;
 class LayerTest extends PHPUnit_Framework_TestCase
 {
 
-    protected $resource;
-
-    protected function setUp()
+    public function testLayerClassImplementsLayerInterface()
     {
-        parent::setUp();
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $layer = new Layer($adapter);
+        $this->assertInstanceOf('Phower\Image\LayerInterface', $layer);
     }
 
-    public function testConstructMethodRequiresResourceToBeAGdResourceAnImagickOrAGmagickInstance()
+    public function testConstructMethodAcceptsNameArgument()
     {
-        $file = __DIR__ . '/../../data/lisbon1.jpg';
-
-        $resource = imagecreatefromjpeg($file);
-        $layer = new Layer($resource);
-        $this->assertInstanceOf('Phower\Image\Layer', $layer);
-
-        $resource = new \Imagick($file);
-        $layer = new Layer($resource);
-        $this->assertInstanceOf('Phower\Image\Layer', $layer);
-
-        $resource = fopen($file, 'r');
-        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
-        $layer = new Layer($resource);
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $layer = new Layer($adapter, 0, 0, 'Layer 1');
+        $this->assertInstanceOf('Phower\Image\LayerInterface', $layer);
     }
 
-    public function testConstructMethodAcceptsPosXPosYAndNameArguments()
+    public function testGetAdapterReturnsCurrentAdapter()
     {
-        $file = __DIR__ . '/../../data/lisbon1.jpg';
-
-        $resource = imagecreatefromjpeg($file);
-        $layer = new Layer($resource, -10, 10, 'Layer 1');
-        $this->assertInstanceOf('Phower\Image\Layer', $layer);
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $layer = new Layer($adapter, 0, 0, 'Layer 1');
+        $this->assertEquals($adapter, $layer->getAdapter());
     }
 
-    public function testGetResourceMethodReturnsCurrentResource()
+    public function testSetNameMethodSetsNameAndGetNameMethodReturnsName()
     {
-        $file = __DIR__ . '/../../data/lisbon1.jpg';
-
-        $resource = imagecreatefromjpeg($file);
-        $layer = new Layer($resource, -10, 10, 'Layer 1');
-        $this->assertEquals($resource, $layer->getResource());
-    }
-
-    public function testSetNameMethodSetsLayerNameAndGetNameMethodGetsLayerName()
-    {
-        $file = __DIR__ . '/../../data/lisbon1.jpg';
-
-        $resource = imagecreatefromjpeg($file);
-        $layer = new Layer($resource);
-        $name = 'My Layer';
-        $layer->setName($name);
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $layer = new Layer($adapter);
+        $name = 'Layer 1';
+        $this->assertInstanceOf('Phower\Image\LayerInterface', $layer->setName($name));
         $this->assertEquals($name, $layer->getName());
     }
 
-    public function testSetPosXMethodSetsLayerPosXAndGetPosXMethodGetsLayerPosX()
+    public function testSetPosXMethodSetsPosXAndGetPosXMethodReturnsPosX()
     {
-        $file = __DIR__ . '/../../data/lisbon1.jpg';
-
-        $resource = imagecreatefromjpeg($file);
-        $layer = new Layer($resource);
-        $posX = -10;
-        $layer->setPosX($posX);
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $layer = new Layer($adapter);
+        $posX = 10;
+        $this->assertInstanceOf('Phower\Image\LayerInterface', $layer->setPosX($posX));
         $this->assertEquals($posX, $layer->getPosX());
     }
 
-    public function testSetPosYMethodSetsLayerPosYAndGetPosYMethodGetsLayerPosY()
+    public function testSetPosYMethodSetsPosYAndGetPosYMethodReturnsPosY()
     {
-        $file = __DIR__ . '/../../data/lisbon1.jpg';
-
-        $resource = imagecreatefromjpeg($file);
-        $layer = new Layer($resource);
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $layer = new Layer($adapter);
         $posY = 10;
-        $layer->setPosY($posY);
+        $this->assertInstanceOf('Phower\Image\LayerInterface', $layer->setPosY($posY));
         $this->assertEquals($posY, $layer->getPosY());
+    }
+
+    public function testGetWidthMethodProxiesAdapterGetWidthMethod()
+    {
+        $width = 100;
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $adapter->method('getWidth')
+                ->willReturn($width);
+        $layer = new Layer($adapter);
+        $this->assertEquals($width, $layer->getWidth());
+    }
+
+    public function testGetHeightMethodProxiesAdapterGetHeightMethod()
+    {
+        $height = 100;
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $adapter->method('getHeight')
+                ->willReturn($height);
+        $layer = new Layer($adapter);
+        $this->assertEquals($height, $layer->getHeight());
     }
 
 }

@@ -115,4 +115,24 @@ class Layer implements LayerInterface
         return $this->posY;
     }
 
+    /**
+     * Get width
+     * 
+     * @return int
+     */
+    public function getWidth()
+    {
+        return $this->adapter->getWidth();
+    }
+
+    /**
+     * Get height
+     * 
+     * @return int
+     */
+    public function getHeight()
+    {
+        return $this->adapter->getHeight();
+    }
+
 }
