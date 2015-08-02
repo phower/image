@@ -135,4 +135,67 @@ class Layer implements LayerInterface
         return $this->adapter->getHeight();
     }
 
+    /**
+     * Align layer position across image dimensions
+     * 
+     * @param int $width
+     * @param int $height
+     * @param int $position
+     * @return \Phower\Image\Layer
+     * @throws InvalidArgumentException
+     */
+    public function align($width, $height, $position = self::POSITION_MIDDLE_CENTER)
+    {
+        if ((int) $width < 1) {
+            throw new InvalidArgumentException('Width must be an integer greater than 0.');
+        }
+
+        if ((int) $height < 1) {
+            throw new InvalidArgumentException('Height must be an integer greater than 0.');
+        }
+
+        switch ($position) {
+            case self::POSITION_TOP_LEFT :
+                $this->posX = 0;
+                $this->posY = 0;
+                break;
+            case self::POSITION_TOP_CENTER :
+                $this->posX = (int) round(($width - $this->getWidth()) / 2);
+                $this->posY = 0;
+                break;
+            case self::POSITION_TOP_RIGHT :
+                $this->posX = (int) $width - $this->getWidth();
+                $this->posY = 0;
+                break;
+            case self::POSITION_MIDDLE_LEFT :
+                $this->posX = 0;
+                $this->posY = (int) round(($height - $this->getHeight()) / 2);
+                break;
+            case self::POSITION_MIDDLE_CENTER :
+                $this->posX = (int) round(($width - $this->getWidth()) / 2);
+                $this->posY = (int) round(($height - $this->getHeight()) / 2);
+                break;
+            case self::POSITION_MIDDLE_RIGHT :
+                $this->posX = (int) $width - $this->getWidth();
+                $this->posY = (int) round(($height - $this->getHeight()) / 2);
+                break;
+            case self::POSITION_BOTTOM_LEFT :
+                $this->posX = 0;
+                $this->posY = (int) $height - $this->getHeight();
+                break;
+            case self::POSITION_BOTTOM_CENTER :
+                $this->posX = (int) round(($width - $this->getWidth()) / 2);
+                $this->posY = (int) $height - $this->getHeight();
+                break;
+            case self::POSITION_BOTTOM_RIGHT :
+                $this->posX = (int) $width - $this->getWidth();
+                $this->posY = (int) $height - $this->getHeight();
+                break;
+            default:
+                throw new InvalidArgumentException('Position must be an integer between 1 and 9.');
+        }
+        
+        return $this;
+    }
+
 }

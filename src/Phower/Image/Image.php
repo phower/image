@@ -177,7 +177,7 @@ class Image implements ImageInterface
      * @return \Phower\Image\Image
      * @throws InvalidArgumentException
      */
-    public function import($file, $mode = LayersStack::APPEND_TOP)
+    public function import($file, $mode = LayersStack::APPEND_TOP, $position = LayerInterface::POSITION_MIDDLE_CENTER)
     {
         if (!is_readable($file)) {
             throw new InvalidArgumentException('Unable to import source: ' . $file);
@@ -188,9 +188,11 @@ class Image implements ImageInterface
         $adapter = call_user_func_array($callback, [$file]);
         $layer = new Layer($adapter);
 
-        if ($this->width === null && $this->height === null && $this->layers->count() === 0) {
+        if (($this->width === null || $this->height === null) && $this->layers->count() === 0) {
             $this->width = $layer->getWidth();
             $this->height = $layer->getHeight();
+        } else {
+            $layer->align($this->width, $this->height, $position);
         }
 
         $this->layers->append($layer, $mode);

@@ -4,6 +4,7 @@ namespace Phower\ImageTest;
 
 use PHPUnit_Framework_TestCase;
 use Phower\Image\Layer;
+use Phower\Image\LayerInterface;
 
 class LayerTest extends PHPUnit_Framework_TestCase
 {
@@ -82,6 +83,91 @@ class LayerTest extends PHPUnit_Framework_TestCase
                 ->willReturn($height);
         $layer = new Layer($adapter);
         $this->assertEquals($height, $layer->getHeight());
+    }
+
+    public function testAlignMethodAlignsLayerAcrossImageDimensions()
+    {
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $adapter->method('getWidth')->willReturn(100);
+        $adapter->method('getHeight')->willReturn(100);
+
+        $layer = new Layer($adapter);
+
+        $layer->align(200, 150, LayerInterface::POSITION_TOP_LEFT);
+        $this->assertEquals(0, $layer->getPosX());
+        $this->assertEquals(0, $layer->getPosY());
+
+        $layer->align(200, 150, LayerInterface::POSITION_TOP_CENTER);
+        $this->assertEquals(50, $layer->getPosX());
+        $this->assertEquals(0, $layer->getPosY());
+
+        $layer->align(200, 150, LayerInterface::POSITION_TOP_RIGHT);
+        $this->assertEquals(100, $layer->getPosX());
+        $this->assertEquals(0, $layer->getPosY());
+
+        $layer->align(200, 150, LayerInterface::POSITION_MIDDLE_LEFT);
+        $this->assertEquals(0, $layer->getPosX());
+        $this->assertEquals(25, $layer->getPosY());
+
+        $layer->align(200, 150, LayerInterface::POSITION_MIDDLE_CENTER);
+        $this->assertEquals(50, $layer->getPosX());
+        $this->assertEquals(25, $layer->getPosY());
+
+        $layer->align(200, 150, LayerInterface::POSITION_MIDDLE_RIGHT);
+        $this->assertEquals(100, $layer->getPosX());
+        $this->assertEquals(25, $layer->getPosY());
+
+        $layer->align(200, 150, LayerInterface::POSITION_BOTTOM_LEFT);
+        $this->assertEquals(0, $layer->getPosX());
+        $this->assertEquals(50, $layer->getPosY());
+
+        $layer->align(200, 150, LayerInterface::POSITION_BOTTOM_CENTER);
+        $this->assertEquals(50, $layer->getPosX());
+        $this->assertEquals(50, $layer->getPosY());
+
+        $layer->align(200, 150, LayerInterface::POSITION_BOTTOM_RIGHT);
+        $this->assertEquals(100, $layer->getPosX());
+        $this->assertEquals(50, $layer->getPosY());
+    }
+
+    public function testAlignMethodThrowsExceptionWhenImageWidthIsInvalid()
+    {
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $adapter->method('getWidth')->willReturn(100);
+        $adapter->method('getHeight')->willReturn(100);
+
+        $layer = new Layer($adapter);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $layer->align(0, 10);
+    }
+
+    public function testAlignMethodThrowsExceptionWhenImageHeightIsInvalid()
+    {
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $adapter->method('getWidth')->willReturn(100);
+        $adapter->method('getHeight')->willReturn(100);
+
+        $layer = new Layer($adapter);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $layer->align(10, 0);
+    }
+
+    public function testAlignMethodThrowsExceptionWhenPositionIsInvalid()
+    {
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+        $adapter->method('getWidth')->willReturn(100);
+        $adapter->method('getHeight')->willReturn(100);
+
+        $layer = new Layer($adapter);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $layer->align(10, 10, 10);
     }
 
 }

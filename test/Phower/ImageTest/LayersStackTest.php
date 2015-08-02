@@ -4,6 +4,7 @@ namespace Phower\ImageTest;
 
 use PHPUnit_Framework_TestCase;
 use Phower\Image\LayersStack;
+use Phower\Image\Layer;
 
 class LayersStackTest extends PHPUnit_Framework_TestCase
 {
@@ -174,22 +175,19 @@ class LayersStackTest extends PHPUnit_Framework_TestCase
 
     public function testAppendMethodAddsElementToTheTopOrTheBottomOfTheStack()
     {
-        $layer1 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
                 ->getMock();
-        $layer1->method('getName')
-                ->willReturn('Layer 1');
+        
+        $layer1 = new Layer($adapter);
+        $layer1->setName('Layer 1');
+
+        $layer2 = new Layer($adapter);
+        $layer2->setName('Layer 2');
 
         $layers = new LayersStack();
 
         $layers->append($layer1, LayersStack::APPEND_TOP);
         $this->assertEquals(1, $layers->count());
-
-        $layer2 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
-                ->getMock();
-        $layer2->method('getName')
-                ->willReturn('Layer 2');
 
         $layers->append($layer2, LayersStack::APPEND_BOTTOM);
         $this->assertEquals(2, $layers->count());
@@ -198,23 +196,17 @@ class LayersStackTest extends PHPUnit_Framework_TestCase
 
     public function testMoveTopMethodMovesCurrentLayerToTheTop()
     {
-        $layer1 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
                 ->getMock();
-        $layer1->method('getName')
-                ->willReturn('Layer 1');
+        
+        $layer1 = new Layer($adapter);
+        $layer1->setName('Layer 1');
 
-        $layer2 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
-                ->getMock();
-        $layer2->method('getName')
-                ->willReturn('Layer 2');
+        $layer2 = new Layer($adapter);
+        $layer2->setName('Layer 2');
 
-        $layer3 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
-                ->getMock();
-        $layer3->method('getName')
-                ->willReturn('Layer 3');
+        $layer3 = new Layer($adapter);
+        $layer3->setName('Layer 3');
 
         $layers = new LayersStack();
         $layers->append($layer1)
@@ -232,23 +224,17 @@ class LayersStackTest extends PHPUnit_Framework_TestCase
 
     public function testMoveBottomMethodMovesCurrentLayerToTheBottom()
     {
-        $layer1 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
                 ->getMock();
-        $layer1->method('getName')
-                ->willReturn('Layer 1');
+        
+        $layer1 = new Layer($adapter);
+        $layer1->setName('Layer 1');
 
-        $layer2 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
-                ->getMock();
-        $layer2->method('getName')
-                ->willReturn('Layer 2');
+        $layer2 = new Layer($adapter);
+        $layer2->setName('Layer 2');
 
-        $layer3 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
-                ->getMock();
-        $layer3->method('getName')
-                ->willReturn('Layer 3');
+        $layer3 = new Layer($adapter);
+        $layer3->setName('Layer 3');
 
         $layers = new LayersStack();
         $layers->append($layer1)
@@ -264,23 +250,17 @@ class LayersStackTest extends PHPUnit_Framework_TestCase
 
     public function testMoveUpMethodMovesCurrentLayerOnePositionUp()
     {
-        $layer1 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
                 ->getMock();
-        $layer1->method('getName')
-                ->willReturn('Layer 1');
+        
+        $layer1 = new Layer($adapter);
+        $layer1->setName('Layer 1');
 
-        $layer2 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
-                ->getMock();
-        $layer2->method('getName')
-                ->willReturn('Layer 2');
+        $layer2 = new Layer($adapter);
+        $layer2->setName('Layer 2');
 
-        $layer3 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
-                ->getMock();
-        $layer3->method('getName')
-                ->willReturn('Layer 3');
+        $layer3 = new Layer($adapter);
+        $layer3->setName('Layer 3');
 
         $layers = new LayersStack();
         $layers->append($layer1)
@@ -304,23 +284,17 @@ class LayersStackTest extends PHPUnit_Framework_TestCase
 
     public function testMoveDownMethodMovesCurrentLayerOnePositionDown()
     {
-        $layer1 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
                 ->getMock();
-        $layer1->method('getName')
-                ->willReturn('Layer 1');
+        
+        $layer1 = new Layer($adapter);
+        $layer1->setName('Layer 1');
 
-        $layer2 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
-                ->getMock();
-        $layer2->method('getName')
-                ->willReturn('Layer 2');
+        $layer2 = new Layer($adapter);
+        $layer2->setName('Layer 2');
 
-        $layer3 = $this->getMockBuilder('Phower\Image\LayerInterface')
-                ->setMethods(['getName'])
-                ->getMock();
-        $layer3->method('getName')
-                ->willReturn('Layer 3');
+        $layer3 = new Layer($adapter);
+        $layer3->setName('Layer 3');
 
         $layers = new LayersStack();
         $layers->append($layer1)
