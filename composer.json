@@ -1,6 +1,6 @@
 {
     "name": "phower/image",
-    "description": "PHP library for image manipulation with built in support for GD, Imagick and Gmagick.",
+    "description": "PHP library for image manipulation with built in support for GD and Imagick.",
     "homepage": "https://github.com/phower/image",
     "type": "library",
     "require": {

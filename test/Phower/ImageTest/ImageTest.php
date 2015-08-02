@@ -12,8 +12,6 @@ function class_exists($name)
 {
     if ($name === 'Imagick' && null !== ImageTest::$mockClassExistsImagick) {
         return ImageTest::$mockClassExistsImagick;
-    } elseif ($name === 'Gmagick' && null !== ImageTest::$mockClassExistsGmagick) {
-        return ImageTest::$mockClassExistsGmagick;
     }
     return \class_exists($name);
 }
@@ -41,15 +39,13 @@ class ImageTest extends PHPUnit_Framework_TestCase
 {
 
     public static $mockClassExistsImagick;
-    public static $mockClassExistsGmagick;
     public static $mockFunctionExistsGdInfo;
 
     protected function setUp()
     {
         parent::setUp();
 
-        self::$mockClassExistsGmagick = null;
-        self::$mockClassExistsGmagick = null;
+        self::$mockClassExistsImagick = null;
         self::$mockFunctionExistsGdInfo = null;
     }
 
@@ -81,7 +77,6 @@ class ImageTest extends PHPUnit_Framework_TestCase
     {
         return [
             ['Phower\Image\Adapter\GdAdapter'],
-            ['Phower\Image\Adapter\GmagickAdapter'],
             ['Phower\Image\Adapter\ImagickAdapter'],
         ];
     }
@@ -99,7 +94,6 @@ class ImageTest extends PHPUnit_Framework_TestCase
     {
         return [
             [ImageInterface::ADAPTER_GD, 'Phower\Image\Adapter\GdAdapter'],
-            [ImageInterface::ADAPTER_GMAGICK, 'Phower\Image\Adapter\GmagickAdapter'],
             [ImageInterface::ADAPTER_IMAGICK, 'Phower\Image\Adapter\ImagickAdapter'],
         ];
     }
@@ -125,21 +119,11 @@ class ImageTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Phower\Image\Adapter\GdAdapter', $image->getDefaultAdapter());
     }
 
-    public function testGetDefaultAdapterMethodFallbacksToGmagickWhenImagickAndGdAreNotAvailable()
-    {
-        $image = new Image();
-        self::$mockClassExistsImagick = false;
-        self::$mockFunctionExistsGdInfo = false;
-        self::$mockClassExistsGmagick = true;
-        $this->assertEquals('Phower\Image\Adapter\GmagickAdapter', $image->getDefaultAdapter());
-    }
-
     public function testGetDefaultAdapterMethodThrowsAnExceptionWhenNoneOfTheLibrariesIsAvailable()
     {
         $image = new Image();
         self::$mockClassExistsImagick = false;
         self::$mockFunctionExistsGdInfo = false;
-        self::$mockClassExistsGmagick = false;
         $this->setExpectedException('Phower\Image\Exception\RuntimeException');
         $image->getDefaultAdapter();
     }

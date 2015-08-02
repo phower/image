@@ -1,34 +1,8 @@
 <?php
 
-/**
- * Native functions mocked for Phower\Image namespace
- */
-
-namespace Phower\Image\Adapter;
-
-use Phower\ImageTest\Adapter\GdAdapterTest;
-
-function function_exists($name)
-{
-    if ($name === 'gd_info' && null !== GdAdapterTest::$mockFunctionExistsGdInfo) {
-        return GdAdapterTest::$mockFunctionExistsGdInfo;
-    }
-    return \function_exists($name);
-}
-
-function gd_info()
-{
-    if (null !== GdAdapterTest::$mockGdInfoResult) {
-        return GdAdapterTest::$mockGdInfoResult;
-    }
-    return \gd_info();
-}
-
-/**
- * Phower\Image test case
- */
-
 namespace Phower\ImageTest\Adapter;
+
+require_once __DIR__ . '/../../../functions.php';
 
 use PHPUnit_Framework_TestCase;
 use PHPUnit_Framework_Error_Warning;
@@ -93,6 +67,14 @@ class GdAdapterTest extends PHPUnit_Framework_TestCase
         $resource = fopen(__DIR__ . '/../../../data/lisbon1.jpg', 'rb');
         $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
         $adapter = new GdAdapter($resource);
+    }
+
+    public function testConstructMethodAlwaysConvertResourceTrueColor()
+    {
+        $resource = imagecreatefromgif(__DIR__ . '/../../../data/lisbon1.gif');
+        $this->assertFalse(imageistruecolor($resource));
+        $adapter = new GdAdapter($resource);
+        $this->assertTrue(imageistruecolor($adapter->getResource()));
     }
 
     public function testFromFileMethodCreatesANewAdapterFromAFile()

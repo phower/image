@@ -14,7 +14,6 @@ class Image implements ImageInterface
      */
     protected $adapterAlias = [
         self::ADAPTER_GD => 'Phower\Image\Adapter\GdAdapter',
-        self::ADAPTER_GMAGICK => 'Phower\Image\Adapter\GmagickAdapter',
         self::ADAPTER_IMAGICK => 'Phower\Image\Adapter\ImagickAdapter',
     ];
 
@@ -100,10 +99,8 @@ class Image implements ImageInterface
                 $this->defaultAdapter = $this->adapterAlias[self::ADAPTER_IMAGICK];
             } elseif (function_exists('gd_info')) {
                 $this->defaultAdapter = $this->adapterAlias[self::ADAPTER_GD];
-            } elseif (class_exists('Gmagick')) {
-                $this->defaultAdapter = $this->adapterAlias[self::ADAPTER_GMAGICK];
             } else {
-                throw new RuntimeException('At least one of Imagick, Gmagick or GD must be installed. '
+                throw new RuntimeException('At least one of Imagick or GD must be installed. '
                 . 'None of them was found.');
             }
         }

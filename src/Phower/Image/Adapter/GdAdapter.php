@@ -39,7 +39,19 @@ class GdAdapter implements AdapterInterface
             throw new InvalidArgumentException('Argument is not a valid GD resource.');
         }
 
-        $this->resource = $resource;
+        if (!imageistruecolor($resource)) {
+            $width = imagesx($resource);
+            $height = imagesy($resource);
+
+            $truecolor = imagecreatetruecolor($width, $height);
+            imagecopymerge($truecolor, $resource, 0, 0, 0, 0, $width, $height, 100);
+
+            imagedestroy($resource);
+            
+            $this->resource = $truecolor;
+        } else {
+            $this->resource = $resource;
+        }
     }
 
     /**

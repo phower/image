@@ -1,42 +1,8 @@
 <?php
 
-/**
- * Native functions mocked for Phower\Image namespace
- */
-
-namespace Phower\Image\Adapter;
-
-use Phower\ImageTest\Adapter\ImagickAdapterTest;
-
-function extension_loaded($name)
-{
-    if ($name === 'imagick' && null !== ImagickAdapterTest::$mockExtensionLoadedImagick) {
-        return ImagickAdapterTest::$mockExtensionLoadedImagick;
-    }
-    return \extension_loaded($name);
-}
-
-function version_compare($version1, $version2, $operator = null)
-{
-    if (null !== ImagickAdapterTest::$mockVersionCompare) {
-        return ImagickAdapterTest::$mockVersionCompare;
-    }
-    return \version_compare($version1, $version2, $operator);
-}
-
-function file_put_contents($filename, $data, $flags = 0, $context = null)
-{
-    if (null !== ImagickAdapterTest::$mockFilePutContents) {
-        return ImagickAdapterTest::$mockFilePutContents;
-    }
-    return \file_put_contents($filename, $data, $flags, $context);
-}
-
-/**
- * Phower\Image test case
- */
-
 namespace Phower\ImageTest\Adapter;
+
+require_once __DIR__ . '/../../../functions.php';
 
 use PHPUnit_Framework_TestCase;
 use PHPUnit_Framework_Error_Warning;
