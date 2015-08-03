@@ -194,7 +194,34 @@ class Layer implements LayerInterface
             default:
                 throw new InvalidArgumentException('Position must be an integer between 1 and 9.');
         }
-        
+
+        return $this;
+    }
+
+    /**
+     * Resize this layer to the given new dimensions and adjust itsposition
+     * if new coordinates are supplied
+     * 
+     * @param int $width
+     * @param int $height
+     * @param int|null $posX
+     * @param int|null $posY
+     * @return \Phower\Image\Layer
+     */
+    public function resize($width, $height, $posX = null, $posY = null)
+    {
+        if ($posX === null) {
+            $posX = $this->getPosX();
+        }
+
+        if ($posY === null) {
+            $posY = $this->getPosY();
+        }
+
+        $this->getAdapter()->resize($width, $height);
+
+        $this->setPosX($posX)->setPosY($posY);
+
         return $this;
     }
 

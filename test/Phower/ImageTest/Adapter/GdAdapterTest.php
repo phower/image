@@ -15,6 +15,7 @@ class GdAdapterTest extends PHPUnit_Framework_TestCase
     protected $resource;
     public static $mockFunctionExistsGdInfo;
     public static $mockGdInfoResult;
+    public static $mockImagecopyresampled;
 
     protected function setUp()
     {
@@ -27,6 +28,7 @@ class GdAdapterTest extends PHPUnit_Framework_TestCase
 
         self::$mockFunctionExistsGdInfo = null;
         self::$mockGdInfoResult = null;
+        self::$mockImagecopyresampled = null;
     }
 
     protected function tearDown()
@@ -152,4 +154,47 @@ class GdAdapterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(845, $image->getHeight());
     }
 
+    public function testResizeMethodScalesImageToNewDimensions()
+    {
+        $file = __DIR__ . '/../../../data/lisbon1.jpg';
+        $resource = imagecreatefromjpeg($file);
+        $adapter = new GdAdapter($resource);
+        $this->assertEquals(imagesx($resource), $adapter->getWidth());
+        $this->assertEquals(imagesy($resource), $adapter->getHeight());
+        
+        $adapter->resize(120, 100);
+        $this->assertEquals(120, $adapter->getWidth());
+        $this->assertEquals(100, $adapter->getHeight());
+    }
+    
+    public function testResizeMethodThrowsExceptionWhenWidthIsLessThen1()
+    {
+        $file = __DIR__ . '/../../../data/lisbon1.jpg';
+        $resource = imagecreatefromjpeg($file);
+        $adapter = new GdAdapter($resource);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $adapter->resize(0, 100);
+    }
+    
+    public function testResizeMethodThrowsExceptionWhenHeightIsLessThen1()
+    {
+        $file = __DIR__ . '/../../../data/lisbon1.jpg';
+        $resource = imagecreatefromjpeg($file);
+        $adapter = new GdAdapter($resource);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $adapter->resize(100, 0);
+    }
+    
+    public function testResizeMethodThrowsExceptionWhenImageCantBeResampled()
+    {
+        $file = __DIR__ . '/../../../data/lisbon1.jpg';
+        $resource = imagecreatefromjpeg($file);
+        $adapter = new GdAdapter($resource);
+
+        self::$mockImagecopyresampled = false;
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $adapter->resize(100, 100);
+    }
 }

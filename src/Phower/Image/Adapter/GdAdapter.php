@@ -169,4 +169,33 @@ class GdAdapter implements AdapterInterface
         return imagesy($this->resource);
     }
 
+    /**
+     * Resize the image for any given width and height
+     * 
+     * @param int $width
+     * @param int $height
+     * @return \Phower\Image\Adapter\GdAdapter
+     * @throws InvalidArgumentException
+     */
+    public function resize($width, $height)
+    {
+        if ((int) $width < 1) {
+            throw new InvalidArgumentException('Width must be an integer greater than 0.');
+        }
+
+        if ((int) $height < 1) {
+            throw new InvalidArgumentException('Height must be an integer greater than 0.');
+        }
+
+        $resource = imagecreatetruecolor($width, $height);
+        
+        if (false === imagecopyresampled($resource, $this->resource, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight())) {
+            throw new InvalidArgumentException('Unable to resize image.');
+        }
+
+        imagedestroy($this->resource);
+        $this->resource = $resource;
+        
+        return $this;
+    }
 }

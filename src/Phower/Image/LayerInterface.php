@@ -26,7 +26,7 @@ interface LayerInterface
      * Set name
      * 
      * @param string $name
-     * @return self
+     * @return \Phower\Image\LayerInterface
      */
     public function setName($name);
 
@@ -41,7 +41,7 @@ interface LayerInterface
      * Set position x coordinate
      * 
      * @param int $posX
-     * @return self
+     * @return \Phower\Image\LayerInterface
      */
     public function setPosX($posX);
 
@@ -56,7 +56,7 @@ interface LayerInterface
      * Set position y coordinate
      * 
      * @param int $posY
-     * @return self
+     * @return \Phower\Image\LayerInterface
      */
     public function setPosY($posY);
 
@@ -87,8 +87,17 @@ interface LayerInterface
      * @param int $width
      * @param int $height
      * @param int $position
-     * @return self
+     * @return \Phower\Image\LayerInterface
      * @throws InvalidArgumentException
      */
     public function align($width, $height, $position = self::POSITION_MIDDLE_CENTER);
+
+    /**
+     * Resize layer
+     * 
+     * @param int $width
+     * @param int $height
+     * @return \Phower\Image\LayerInterface
+     */
+    public function resize($width, $height, $posX = null, $posY = null);
 }

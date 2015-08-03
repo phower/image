@@ -78,4 +78,13 @@ interface AdapterInterface
      * @return int
      */
     public function getHeight();
+    
+    /**
+     * Resize the image for any given width and height
+     * 
+     * @param int $width
+     * @param int $height
+     * @return \Phower\Image\Adapter\AdapterInterface
+     */
+    public function resize($width, $height);
 }

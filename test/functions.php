@@ -21,6 +21,14 @@ function gd_info()
     return \gd_info();
 }
 
+function imagecopyresampled($dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h)
+{
+    if (null !== GdAdapterTest::$mockImagecopyresampled) {
+        return GdAdapterTest::$mockImagecopyresampled;
+    }
+    return \imagecopyresampled($dst_image, $src_image, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h);
+}
+
 function extension_loaded($name)
 {
     if ($name === 'imagick' && null !== ImagickAdapterTest::$mockExtensionLoadedImagick) {

@@ -213,4 +213,115 @@ class ImageTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($image->getLayers()->current()->getHeight(), $image->getHeight());
     }
 
+    public function testResizeMethodScalesImageAndAllLayersToNewDimensions()
+    {
+        $file1 = __DIR__ . '/../../data/lisbon1.jpg';
+        $file2 = __DIR__ . '/../../data/lisbon3.jpg';
+
+        $image = new Image();
+
+        $image->import($file1)
+                ->import($file2);
+
+        $layer = $image->getLayers()->offsetGet(1);
+        $this->assertEquals($layer->getWidth(), $image->getWidth());
+        $this->assertEquals($layer->getHeight(), $image->getHeight());
+
+        $width = 300;
+        $height = 200;
+
+        $image->resize($width, $height);
+
+        $layer = $image->getLayers()->offsetGet(1);
+        $this->assertEquals($width, $image->getWidth());
+        $this->assertEquals($height, $image->getHeight());
+        $this->assertEquals($width, $layer->getWidth());
+        $this->assertEquals($height, $layer->getHeight());
+    }
+
+    public function testResizeMethodAlsoAdjustsLayersPositionProportionally()
+    {
+        $file1 = __DIR__ . '/../../data/lisbon1.jpg';
+        $file2 = __DIR__ . '/../../data/lisbon3.jpg';
+
+        $image = new Image();
+        $image->import($file1)
+                ->import($file2);
+
+        $width = 300;
+        $height = 200;
+
+        $pos = [];
+        foreach ($image->getLayers() as $i => $layer) {
+            $pos[] = [
+                round(($width / $layer->getWidth()) * $layer->getPosX()),
+                round(($height / $layer->getHeight()) * $layer->getPosY()),
+            ];
+        }
+
+        $image->resize($width, $height);
+
+        foreach ($image->getLayers() as $i => $layer) {
+            $this->assertEquals($pos[$i][0], $layer->getPosX());
+            $this->assertEquals($pos[$i][1], $layer->getPosY());
+        }
+    }
+
+    public function testResizeMethodThrowsExceptionWhenBothWidthAndHeightAreNull()
+    {
+        $file1 = __DIR__ . '/../../data/lisbon1.jpg';
+
+        $image = new Image();
+        $image->import($file1);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $image->resize();
+    }
+
+    public function testResizeMethodKeepsImageRatioWhenOnlyOneSideDimensionIsGiven()
+    {
+        $file1 = __DIR__ . '/../../data/lisbon1.jpg';
+
+        $image = new Image();
+        $image->import($file1);
+
+        $width = 600;
+        $height = round(($width / $image->getWidth()) * $image->getHeight());
+        $image->resize($width, null);
+        $this->assertEquals($width, $image->getWidth());
+        $this->assertEquals($height, $image->getHeight());
+
+        $height = 200;
+        $width = round(($height / $image->getHeight()) * $image->getWidth());
+        $image->resize(null, $height);
+        $this->assertEquals($width, $image->getWidth());
+        $this->assertEquals($height, $image->getHeight());
+    }
+
+    public function testScaleMethodScalesImageDimensionsForTheGivenProportionsRatio()
+    {
+        $file1 = __DIR__ . '/../../data/lisbon1.jpg';
+
+        $image = new Image();
+        $image->import($file1);
+
+        $ratio = 0.15;
+        $width = round($image->getWidth() * $ratio);
+        $heigth = round($image->getHeight() * $ratio);
+        
+        $image->scale($ratio);
+        $this->assertEquals($width, $image->getWidth());
+        $this->assertEquals($heigth, $image->getHeight());
+    }
+
+    public function testScaleMethodThrowsExceptionWhenRationIsNotNumeric()
+    {
+        $file1 = __DIR__ . '/../../data/lisbon1.jpg';
+
+        $image = new Image();
+        $image->import($file1);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $image->scale('abc');
+    }
 }

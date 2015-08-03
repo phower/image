@@ -170,4 +170,38 @@ class LayerTest extends PHPUnit_Framework_TestCase
         $layer->align(10, 10, 10);
     }
 
+    public function testResizeMethodScalesLayerAndAdjustItsPosition()
+    {
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+
+        $adapter->method('resize')->willReturn(true);
+        $adapter->method('getWidth')->willReturn(100);
+        $adapter->method('getHeight')->willReturn(100);
+
+        $layer = new Layer($adapter);
+        $layer->resize(100, 100, 10, 15);
+
+        $this->assertEquals(100, $layer->getWidth());
+        $this->assertEquals(100, $layer->getHeight());
+        $this->assertEquals(10, $layer->getPosX());
+        $this->assertEquals(15, $layer->getPosY());
+    }
+
+    public function testResizeMethodKeepsCurrentPositionWhenCorrdinatesAreNotSupplied()
+    {
+        $adapter = $this->getMockBuilder('Phower\Image\Adapter\AdapterInterface')
+                ->getMock();
+
+        $adapter->method('resize')->willReturn(true);
+
+        $layer = new Layer($adapter);
+        $posX = $layer->getPosX();
+        $posY = $layer->getPosY();
+        
+        $layer->resize(100, 100);
+
+        $this->assertEquals($posX, $layer->getPosX());
+        $this->assertEquals($posY, $layer->getPosY());
+    }
 }

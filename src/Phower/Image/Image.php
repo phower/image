@@ -200,4 +200,57 @@ class Image implements ImageInterface
         return $this;
     }
 
+    /**
+     * Resize image and all layers to new dimensions and adjust layers'
+     * positions proportionally
+     * 
+     * @param int|null $width
+     * @param int|null $height
+     * @return \Phower\Image\Image
+     * @throws InvalidArgumentException
+     */
+    public function resize($width = null, $height = null)
+    {
+        if ($width === null && $height === null) {
+            throw new InvalidArgumentException('At least width or height must be defined.');
+        } elseif ($width === null) {
+            $width = (int) round(($height / $this->getHeight()) * $this->getWidth());
+        } elseif ($height === null) {
+            $height = (int) round(($width / $this->getWidth()) * $this->getHeight());
+        }
+
+        /* @var $layer \Phower\Image\LayerInterface */
+        foreach ($this->layers as $layer) {
+            $posX = (int) round(($width / $layer->getWidth()) * $layer->getPosX());
+            $posY = (int) round(($height / $layer->getHeight()) * $layer->getPosY());
+            $layer->resize($width, $height, $posX, $posY);
+        }
+
+        $this->setWidth($width);
+        $this->setHeight($height);
+
+        return $this;
+    }
+
+    /**
+     * Scale image through a given ratio
+     * 
+     * @param float $ratio
+     * @return \Phower\Image\Image
+     * @throws InvalidArgumentException
+     */
+    public function scale($ratio)
+    {
+        if (!is_numeric($ratio)) {
+            throw new InvalidArgumentException('Ratio must be a numeric value.');
+        }
+
+        $width = round($this->width * $ratio);
+        $height = round($this->height * $ratio);
+
+        $this->resize($width, $height);
+
+        return $this;
+    }
+
 }

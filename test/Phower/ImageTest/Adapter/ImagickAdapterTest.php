@@ -136,4 +136,51 @@ class ImagickAdapterTest extends PHPUnit_Framework_TestCase
         $image = ImagickAdapter::fromFile($file);
         $this->assertEquals(845, $image->getHeight());
     }
+
+    public function testResizeMethodScalesImageToNewDimensions()
+    {
+        $file = __DIR__ . '/../../../data/lisbon1.jpg';
+        $resource = new Imagick($file);
+        $adapter = new ImagickAdapter($resource);
+        $this->assertEquals($resource->getimagewidth(), $adapter->getWidth());
+        $this->assertEquals($resource->getimageheight(), $adapter->getHeight());
+
+        $adapter->resize(120, 100);
+        $this->assertEquals(120, $adapter->getWidth());
+        $this->assertEquals(100, $adapter->getHeight());
+    }
+
+    public function testResizeMethodThrowsExceptionWhenWidthIsLessThen1()
+    {
+        $file = __DIR__ . '/../../../data/lisbon1.jpg';
+        $resource = new Imagick($file);
+        $adapter = new ImagickAdapter($resource);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $adapter->resize(0, 100);
+    }
+    
+    public function testResizeMethodThrowsExceptionWhenHeightIsLessThen1()
+    {
+        $file = __DIR__ . '/../../../data/lisbon1.jpg';
+        $resource = new Imagick($file);
+        $adapter = new ImagickAdapter($resource);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $adapter->resize(100, 0);
+    }
+    
+    public function testResizeMethodThrowsExceptionWhenImageCantBeResampled()
+    {
+        $resource = $this->getMockBuilder('Imagick')
+                ->setMethods(['scaleimage'])
+                ->getMock();
+        $resource->method('scaleimage')
+                ->willReturn(false);
+        
+        $adapter = new ImagickAdapter($resource);
+
+        $this->setExpectedException('Phower\Image\Exception\InvalidArgumentException');
+        $adapter->resize(100, 100);
+    }
 }

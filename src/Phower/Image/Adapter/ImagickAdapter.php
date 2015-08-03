@@ -126,7 +126,7 @@ class ImagickAdapter implements AdapterInterface
         if ($background === null) {
             $background = new Color();
         }
-        
+
         $resource = new Imagick();
         $resource->newimage($width, $height, $background->toRgba());
 
@@ -161,6 +161,31 @@ class ImagickAdapter implements AdapterInterface
     public function getHeight()
     {
         return $this->resource->getimageheight();
+    }
+
+    /**
+     * Resize the image for any given width and height
+     * 
+     * @param int $width
+     * @param int $height
+     * @return \Phower\Image\Adapter\ImagickAdapter
+     * @throws InvalidArgumentException
+     */
+    public function resize($width, $height)
+    {
+        if ((int) $width < 1) {
+            throw new InvalidArgumentException('Width must be an integer greater than 0.');
+        }
+
+        if ((int) $height < 1) {
+            throw new InvalidArgumentException('Height must be an integer greater than 0.');
+        }
+
+        if (false === $this->resource->scaleimage($width, $height)) {
+            throw new InvalidArgumentException('Unable to resize image.');
+        }
+
+        return $this;
     }
 
 }
